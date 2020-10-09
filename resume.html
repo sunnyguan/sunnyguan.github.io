@@ -1,0 +1,802 @@
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectivizr/1.0.2/selectivizr-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Comfortaa">
+    <script>
+        (function ($) {
+
+            $(document).ready(function () {
+                setupFade();
+                setupClickToScroll();
+                setupPostAnimation();
+                setupScrollToTop();
+                enableScrollAbortion();
+
+                // Trigger window.scroll, this will initiate some of the scripts
+                $(window).scroll();
+            });
+
+
+            // Allow user to cancel scroll animation by manually scrolling
+            function enableScrollAbortion() {
+                var $viewport = $('html, body');
+                $viewport.on('scroll mousedown DOMMouseScroll mousewheel keyup', function (e) {
+                    if (e.which > 0 || e.type === 'mousedown' || e.type === 'mousewheel') {
+                        $viewport.stop();
+                    }
+                });
+            }
+
+            function setupScrollToTop() {
+                var scrollSpeed = 750;
+                $('.trigger-scroll-to-top').click(function (e) {
+                    e.preventDefault();
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, scrollSpeed);
+                });
+            }
+
+
+            function setupPostAnimation() {
+                var posts = $('.post-wrapper .post');
+                $(window).on('scroll resize', function () {
+
+                    var currScroll = $(window).scrollTop() > $(document).scrollTop() ? $(window).scrollTop() : $(document).scrollTop(),
+                        windowHeight = $(window).height(), // Needs to be here because window can resize
+                        overScroll = Math.ceil(windowHeight * .20),
+                        treshhold = (currScroll + windowHeight) - overScroll;
+
+                    posts.each(function () {
+
+                        var post = $(this),
+                            postScroll = post.offset().top
+
+                        if (postScroll > treshhold) {
+                            post.addClass('hidden');
+                        } else {
+                            post.removeClass('hidden');
+                        }
+
+                    });
+
+                });
+            }
+
+            function setupFade() {
+
+                var posts = $('.post-wrapper .post').reverse(),
+                    stemWrapper = $('.stem-wrapper'),
+                    halfScreen = $(window).height() / 2;
+
+                $(window).on('scroll resize', function () {
+
+                    delay(function () {
+
+                        var currScroll = $(window).scrollTop() > $(document).scrollTop() ? $(window).scrollTop() : $(document).scrollTop(),
+                            scrollSplit = currScroll + halfScreen;
+
+                        posts.removeClass('active').each(function () {
+
+                            var post = $(this),
+                                postOffset = post.offset().top;
+
+                            if (scrollSplit > postOffset) {
+
+                                // Add active class to fade in
+                                post.addClass('active')
+
+                                // Get post color
+                                var color = post.data('stem-color') ? post.data('stem-color') : null,
+                                    allColors = 'color-green color-yellow color-white'
+
+                                stemWrapper.removeClass(allColors);
+
+                                if (color !== null) {
+                                    stemWrapper.addClass('color-' + color);
+                                }
+
+                                return false;
+                            }
+
+                        });
+                    }, 20);
+
+                });
+
+            }
+
+
+            function setupClickToScroll(post) {
+
+                var scrollSpeed = 750;
+
+                $('.post-wrapper .post .stem-overlay .icon').click(function (e) {
+                    e.preventDefault();
+
+                    var icon = $(this),
+                        post = icon.closest('.post'),
+                        postTopOffset = post.offset().top,
+                        postHeight = post.height(),
+                        halfScreen = $(window).height() / 2,
+                        scrollTo = postTopOffset - halfScreen + (postHeight / 2);
+
+                    $('html, body').animate({
+                        scrollTop: scrollTo
+                    }, scrollSpeed);
+                });
+
+            }
+
+        })(jQuery);
+
+
+
+
+        /*==========  Helpers  ==========*/
+
+
+        // Timeout function
+        var delay = (function () {
+            var timer = 0;
+            return function (callback, ms) {
+                clearTimeout(timer);
+                timer = setTimeout(callback, ms);
+            };
+        })();
+
+        $.fn.reverse = function () {
+            return this.pushStack(this.get().reverse(), arguments);
+        };
+    </script>
+    <style>
+        /*==========  Global  ==========*/
+        /*==========  Basics  ==========*/
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background: #112C30;
+            margin: 0px;
+            padding: 0px;
+            font-family: sans-serif;
+            font-size: 15px;
+            line-height: 26px;
+            color: #B9CFD0;
+            font-family: 'Roboto Slab', serif;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+
+        a {
+            color: #B9CFD0;
+            text-decoration: none;
+            border-bottom: 1px solid #B9CFD0;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Comfortaa', cursive;
+        }
+
+        /*==========  Sections  ==========*/
+        .header {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            background-image: -webkit-gradient(linear, left top, left bottom, from(#6fc7d4), to(#39ACBD));
+            background-image: linear-gradient(to bottom, #6fc7d4 0%, #39ACBD 100%);
+        }
+
+        .header .master-head {
+            padding: 7% 30px;
+        }
+
+        .header .page-title {
+            padding: 0 30px 0 30px;
+            font-size: 60px;
+            line-height: 1em;
+            letter-spacing: 10px;
+            color: #FFF;
+        }
+
+        .header .page-description {
+            margin: 30px auto;
+            max-width: 600px;
+            font-size: 18px;
+            line-height: 2em;
+            color: #FFF;
+        }
+
+        .header .scroll-button {
+            color: #FFF;
+            font-size: 20px;
+            padding: 15px 20px 15px 20px;
+            display: inline-block;
+            background: #3093A2;
+            cursor: pointer;
+            -webkit-transition-duration: 0.4s;
+            transition-duration: 0.4s;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .header .scroll-button:hover {
+            background: #246f7b;
+        }
+
+        .header .scroll-button:active {
+            background: #194c53;
+        }
+
+        .main-content {
+            margin: 0px auto;
+            position: relative;
+        }
+
+        .main-content .section-inner,
+        .main-content .post-wrapper {
+            *zoom: 1;
+        }
+
+        .main-content .section-inner:before,
+        .main-content .post-wrapper:before,
+        .main-content .section-inner:after,
+        .main-content .post-wrapper:after {
+            content: "";
+            display: table;
+        }
+
+        .main-content .section-inner:after,
+        .main-content .post-wrapper:after {
+            clear: both;
+        }
+
+        .footer {
+            background: #112C30;
+            padding: 150px 0px 300px 0px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer .good-bye {
+            text-align: center;
+            font-size: 18px;
+            line-height: 36px;
+        }
+
+        .footer .good-bye p {
+            display: block;
+            margin: 0px auto 30px auto;
+            max-width: 300px;
+            clear: both;
+        }
+
+        .section .section-inner {
+            margin: 0px auto;
+            width: 1024px;
+        }
+
+        @media only screen {
+            .section .section-inner {
+                width: auto;
+                max-width: 1024px;
+            }
+        }
+
+        /*==========  Stem  ==========*/
+        .stem-wrapper {
+            position: fixed;
+            top: 0px;
+            bottom: 0px;
+            left: 50%;
+        }
+
+        .stem-wrapper.color-yellow .stem-background {
+            background: #E9E566;
+        }
+
+        .stem-wrapper.color-green .stem-background {
+            background: #35C189;
+        }
+
+        .stem-wrapper.color-white .stem-background {
+            background: #FFF;
+        }
+
+        .stem-wrapper .stem,
+        .stem-wrapper .stem-background {
+            position: absolute;
+            top: 0px;
+            left: -30px;
+            width: 60px;
+        }
+
+        .stem-wrapper .stem {
+            background: #1e4f56;
+            height: 100%;
+        }
+
+        .stem-wrapper .stem-background {
+            background: #39ACBD;
+            height: 50%;
+            -webkit-transition-duration: 0.5s;
+            transition-duration: 0.5s;
+        }
+
+        .stem-padding,
+        .single-stem-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0px auto;
+            background: transparent url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/22043/stem-mask.png) repeat-y top center;
+        }
+
+        .single-stem-icon.scroll-to-top {
+            cursor: pointer;
+            background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/22043/scroll-to-top-icon.png);
+        }
+
+        /*==========  Post wrapper ==========*/
+        .post-wrapper {
+            *zoom: 1;
+        }
+
+        .post-wrapper:before,
+        .post-wrapper:after {
+            content: "";
+            display: table;
+        }
+
+        .post-wrapper:after {
+            clear: both;
+        }
+
+        .post-wrapper .post {
+            position: relative;
+            width: 432px;
+            padding: 0px 0px 60px 0px;
+            clear: both;
+            opacity: 1;
+            -webkit-perspective: 1000px;
+            perspective: 1000px;
+        }
+
+        .post-wrapper .post.hidden .post-content {
+            -webkit-transform: translateY(100px) rotateX(30deg);
+            transform: translateY(100px) rotateX(30deg);
+            opacity: 0;
+        }
+
+        .post-wrapper .post:hover .post-content,
+        .post-wrapper .post.active .post-content {
+            opacity: 1;
+        }
+
+        .post-wrapper .post:hover .post-content .meta,
+        .post-wrapper .post.active .post-content .meta {
+            opacity: 1;
+            -webkit-transform: none;
+            transform: none;
+        }
+
+        .post-wrapper .post:nth-child(even) {
+            float: right;
+        }
+
+        .post-wrapper .post:nth-child(odd) {
+            float: left;
+        }
+
+        .post-wrapper .post:nth-child(even) .stem-overlay {
+            left: -110px;
+        }
+
+        .post-wrapper .post:nth-child(odd) .stem-overlay {
+            right: -110px;
+        }
+
+        .post-wrapper .post.music-icon .stem-overlay .icon {
+            background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/22043/music-icon.png);
+        }
+
+        .post-wrapper .post.bitbucket-icon .stem-overlay .icon {
+            background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/22043/bitbucket-icon.png);
+        }
+
+        .post-wrapper .post.m-icon .stem-overlay .icon {
+            background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/22043/m-icon.png);
+        }
+
+        .post-wrapper .post.twitter-icon .stem-overlay .icon {
+            background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/22043/twitter-icon.png);
+        }
+
+        .post-wrapper .post .stem-overlay {
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            width: 60px;
+        }
+
+        .post-wrapper .post .stem-overlay .icon {
+            background: transparent no-repeat center center;
+            height: 60px;
+            width: 60px;
+            cursor: pointer;
+        }
+
+        .post-wrapper .post .stem-overlay .stem-mask {
+            position: absolute;
+            top: 60px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            background: transparent url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/22043/stem-mask.png) repeat-y top center;
+        }
+
+        .post-wrapper .post .post-content {
+            opacity: 0.3;
+            -webkit-transition-duration: 0.4s;
+            transition-duration: 0.4s;
+            -webkit-transform: none;
+            transform: none;
+        }
+
+        .post-wrapper .post .post-content .meta {
+            color: rgba(255, 255, 255, 0.3);
+            margin: 0px 0px 15px 0px;
+            letter-spacing: 1px;
+            opacity: 0;
+            -webkit-transition-duration: 1s;
+            transition-duration: 1s;
+            -webkit-transition-delay: 0.2s;
+            transition-delay: 0.2s;
+            -webkit-transform: translateY(-5px);
+            transform: translateY(-5px);
+        }
+
+        .post-wrapper .post .post-content .post-title {
+            font-size: 32px;
+            line-height: 42px;
+            margin: 0px 0px 15px 0px;
+        }
+
+        /*==========  Media queries  ==========*/
+        @media only screen and (max-width: 1080px) {
+
+            .main-content,
+            .main-content .section-inner {
+                max-width: none;
+            }
+
+            .stem-wrapper {
+                left: 80px;
+            }
+
+            .stem-padding,
+            .single-stem-icon {
+                margin: 0px;
+                float: left;
+                margin-left: 50px;
+            }
+
+            .post-wrapper .post,
+            .post-wrapper .post:nth-child(even),
+            .post-wrapper .post:nth-child(odd) {
+                width: auto;
+                margin-left: 110px;
+                float: none;
+            }
+
+            .post-wrapper .post .stem-overlay,
+            .post-wrapper .post:nth-child(even) .stem-overlay,
+            .post-wrapper .post:nth-child(odd) .stem-overlay {
+                left: -60px;
+                right: auto;
+            }
+
+            .post-wrapper .post .post-content {
+                padding: 0px 50px;
+            }
+        }
+
+        @media only screen and (max-width: 700px) {
+            .header .page-title {
+                font-size: 40px;
+            }
+
+            .post-wrapper .post {
+                margin-left: 90px !important;
+            }
+
+            .post-wrapper .post .post-content {
+                padding: 0 25px;
+            }
+
+            .stem-wrapper {
+                left: 60px;
+            }
+
+            .stem-padding,
+            .single-stem-icon {
+                margin-left: 30px;
+            }
+        }
+
+        .clearfix {
+            *zoom: 1;
+        }
+
+        .clearfix:before,
+        .clearfix:after {
+            content: "";
+            display: table;
+        }
+
+        .clearfix:after {
+            clear: both;
+        }
+    </style>
+
+    <style>
+        .back {
+            border-bottom: none;
+        }
+
+        .degree {
+            padding-right: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stem-wrapper">
+        <div class="stem"></div>
+        <div class="stem-background"></div>
+    </div>
+
+    <header class="section header">
+        <div class="section-inner">
+
+            <div class="master-head">
+                <h1 class="page-title">My Timeline</h1>
+                <p class="page-description">Scroll down to read more about my background.</p>
+                <p class="scroll-button"><a class="back" href="index.html">Go back</a></p>
+            </div>
+
+        </div> <!-- section-inner -->
+    </header> <!-- header -->
+
+    <div class="section main-content">
+        <div class="section-inner">
+
+            <div class="stem-padding"></div>
+
+            <div class="post-wrapper">
+
+                <article class="post music-icon" data-stem-color="yellow">
+                    <div class="stem-overlay">
+                        <div class="icon"></div>
+                        <div class="stem-mask"></div>
+                    </div>
+
+                    <div class="post-content">
+                        <p class="meta">Sep 2020 - Present</p>
+                        <h2 class="post-title">Whiteboard</h2>
+                        <div class="entry-content">
+                            <p>
+                                Whiteboard is a Material Design replacement of Blackboard/eLearning, UTD's online learning platform.
+                                Current features includes grades overview, notifications, custom pins, weekly agenda, and more. 
+                            </p>
+                            <p>
+                                Check out the latest features and source code on
+                                <a href="https://github.com/sunnyguan/whiteboard">GitHub</a>.
+                            </p>
+                            <p>Download the
+                                <a href="https://chrome.google.com/webstore/detail/whiteboard/hgoiijmhpdjkmecnlkpdcflgfjebpbhe?hl=en&authuser=1">Chrome Extension</a>.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post twitter-icon" data-stem-color="white">
+                    <div class="stem-overlay">
+                        <div class="icon"></div>
+                        <div class="stem-mask"></div>
+                    </div>
+
+                    <div class="post-content">
+                        <p class="meta">Sep 2020 - Present</p>
+                        <h2 class="post-title">ACM Research</h2>
+                        <div class="entry-content">
+                            <p>
+                                Researching benefits of using salient features in VR videos to predict user viewport and reduce network usage. 
+                            </p>
+                            <p>
+                                Check it our progress on
+                                <a href="https://github.com/ACM-Research/vr-viewport-analysis">GitHub</a>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post bitbucket-icon">
+                    <div class="stem-overlay">
+                        <div class="icon"></div>
+                        <div class="stem-mask"></div>
+                    </div>
+
+                    <div class="post-content">
+                        <p class="meta">Aug 2020 - Present</p>
+                        <h2 class="post-title">ACM Development</h2>
+                        <div class="entry-content">
+                            <p>
+                                Part of ACM Development's Comet Planning team working on a comprehensive degree planning tool for UTD students. 
+                            </p>
+                            <p>
+                                Released: Not yet
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post music-icon" data-stem-color="yellow">
+                    <div class="stem-overlay">
+                        <div class="icon"></div>
+                        <div class="stem-mask"></div>
+                    </div>
+
+                    <div class="post-content">
+                        <p class="meta">Aug 2020 - May 2022</p>
+                        <h2 class="post-title">UT Dallas</h2>
+                        <div class="entry-content">
+                            <p>B.S Computer Science</p>
+                            <p>
+                                Programs: Collegium V Honors (National Merit Scholar), Computing Scholars (CS^2)
+                            </p>
+                            <p>
+                                Clubs: Association for Computing Machinery (ACM), Artificial Intelligence Society (AIS)
+                            </p>
+                            <p>
+                                Courses: 
+                                <ul>
+                                    <li>Data Structures and Algorithms (CS 3345)</li>
+                                    <li>Probability and Statistics (CS 3341)</li>
+                                    <li>Elementary Number Theory (MATH 3323)</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post music-icon" data-stem-color="yellow">
+                    <div class="stem-overlay">
+                        <div class="icon"></div>
+                        <div class="stem-mask"></div>
+                    </div>
+
+                    <div class="post-content">
+                        <p class="meta">Jul 2020 - Present</p>
+                        <h2 class="post-title">UTDegree Planner</h2>
+                        <div class="entry-content">
+                            <p>
+                                Implemented important features such as prerequisite validation and graph visualization
+                                to improve functionality and visual appeal of application for end users
+                            </p>
+                            <p>
+                                Additional features include transcript parsing (with Python), autocomplete (React MUI),
+                                and import/export
+                            </p>
+                            <p>
+                                Check it out:
+                                <a href="https://utdegreeplanner.com">UTDegree Planner</a>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post twitter-icon" data-stem-color="yellow">
+                    <div class="stem-overlay">
+                        <div class="icon"></div>
+                        <div class="stem-mask"></div>
+                    </div>
+
+                    <div class="post-content">
+                        <p class="meta">Apr 2020 - Present</p>
+                        <h2 class="post-title">UTD Course Search</h2>
+                        <div class="entry-content">
+                            <p>
+                                Maintain average of 50+ users per day by developing web application to aggregate data
+                                from course catalog, past
+                                semester grades, and professor reviews for UTD students.</p>
+                            <p>
+                                Improved user experience by adding course conflict calendar, column sort/filter, and
+                                search history access.
+                            </p>
+                            <p>
+                                Currently bundled within the
+                                <a
+                                    href="https://chrome.google.com/webstore/detail/whiteboard/hgoiijmhpdjkmecnlkpdcflgfjebpbhe?hl=en&authuser=1">Whiteboard
+                                    Chrome Extension</a>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post m-icon" data-stem-color="green">
+                    <div class="stem-overlay">
+                        <div class="icon"></div>
+                        <div class="stem-mask"></div>
+                    </div>
+
+                    <div class="post-content">
+                        <p class="meta">Jul 2019 - Aug 2019</p>
+                        <h2 class="post-title">UCSD COSMOS</h2>
+                        <div class="entry-content">
+                            <p>
+                                Participated in University of California, San Diego's summer program in researching
+                                autonomous vehicles.
+                                Used Tensorflow, Keras, and OpenCV to test different ways of lane tracking and
+                                recognition.
+                            </p>
+                            <p>
+                                Received the Dr. Joseph Watson Award for outstanding leadership and the Gordon
+                                Engineering Leadership Award for best team project.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="post bitbucket-icon">
+                    <div class="stem-overlay">
+                        <div class="icon"></div>
+                        <div class="stem-mask"></div>
+                    </div>
+
+                    <div class="post-content">
+                        <p class="meta">Aug 2016 - Jun 2020</p>
+                        <h2 class="post-title">Lynbrook High School</h2>
+                        <div class="entry-content">
+                            <span class="degree">HS Diploma</span>
+                            <span>GPA: 3.95 UW, SAT: 1580</span>
+
+                            <p>Achievements</p>
+                            <ul>
+                                <li>National Merit Finalist (2020)</li>
+                                <li>AIME Qualifier (2018-2020)</li>
+                                <li>USA Computing Olympiad Gold Division (2017-2020)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+            </div> <!-- post-wrapper -->
+
+            <div class="single-stem-icon scroll-to-top trigger-scroll-to-top"></div>
+
+        </div> <!-- section-inner -->
+    </div> <!-- main-content -->
+
+    <footer class="footer section">
+        <div class="section-inner">
+
+            <div class="good-bye">
+                <p>Questions or comments?</p>
+                <p>Send me a message on <a href="https://www.linkedin.com/in/sunny-guan/">LinkedIn</a></p>
+
+            </div> <!-- section-inner -->
+    </footer> <!-- footer -->
+</body>
+
+</html>
