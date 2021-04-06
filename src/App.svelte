@@ -1,5 +1,4 @@
 <script>
-  export let name;
 </script>
 
 <div class="h-screen flex item-center justify-center">
