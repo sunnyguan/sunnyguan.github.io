@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "set ROLLUP_WATCH false && rollup -c",
-    "dev": "rollup -c -w",
+    "build": "ROLLUP_WATCH=false && rollup -c",
+    "dev": "ROLLUP_WATCH=true && rollup -c -w",
     "start": "sirv docs --no-clear"
   },
   "devDependencies": {
