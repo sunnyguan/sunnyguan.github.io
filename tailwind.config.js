@@ -1,15 +1,15 @@
 module.exports = {
   purge: {
-    enabled: true,
-    content: ['./docs/index.html', './src/**/*.svelte'],
+    enabled: !process.env.ROLLUP_WATCH,
+    content: ["./docs/index.html", "./src/**/*.svelte"],
     options: {
-      defaultExtractor: content => [
+      defaultExtractor: (content) => [
         ...(content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || []),
         ...(content.match(/(?<=class:)[^=>\/\s]*/g) || []),
       ],
     },
   },
-  darkMode: false, // or 'media' or 'class'
+  darkMode: "media", // or 'media' or 'class'
   theme: {
     extend: {},
   },
@@ -17,4 +17,4 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-}
+};
