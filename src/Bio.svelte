@@ -45,11 +45,11 @@
 </script>
 
 <div class="sm:my-auto">
-  <div
+  <h1
     class="text-2xl font-semibold mb-1 text-center sm:text-left tracking-wide"
   >
     Sunny Guan
-  </div>
+  </h1>
   <div class="grid grid-cols-1">
     {#each sections as section}
       <Section {...section} />
