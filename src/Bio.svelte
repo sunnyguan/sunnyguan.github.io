@@ -16,29 +16,37 @@
       items: [
         {
           name: "Virtu Financial",
+          date: "2025",
+        },
+        {
+          name: "Virtu Financial",
+          date: "2024",
+        },
+        {
+          name: "Virtu Financial",
+          date: "2023",
+        },
+        {
+          name: "Virtu Financial",
+          date: "Summer 2022",
+        },
+        {
+          name: "Virtu Financial",
           date: "Fall 2021",
         },
         {
           name: "Amazon",
           date: "Summer 2021",
-        },
+        }
       ],
     },
     {
       title: "Extracurriculars",
       items: [
         {
-          name: "Head of Tech",
-          date: "FinTech UTD",
-        },
-        {
-          name: "Research Lead",
-          date: "ACM Research",
-        },
-        {
-          name: "Developer",
-          date: "ACM Development",
-        },
+          name: "😳",
+          date: "🤔",
+        }
       ],
     },
   ];
