@@ -16,27 +16,15 @@
       items: [
         {
           name: "Virtu Financial",
-          date: "2025",
+          date: "Summer 2022"
         },
         {
           name: "Virtu Financial",
-          date: "2024",
-        },
-        {
-          name: "Virtu Financial",
-          date: "2023",
-        },
-        {
-          name: "Virtu Financial",
-          date: "Summer 2022",
-        },
-        {
-          name: "Virtu Financial",
-          date: "Fall 2021",
+          date: "Fall 2021"
         },
         {
           name: "Amazon",
-          date: "Summer 2021",
+          date: "Summer 2021"
         }
       ],
     },
